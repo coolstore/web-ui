@@ -1,0 +1,30 @@
+{
+  "author": "Red Hat",
+  "contributors": [
+    "James Falkner <jfalkner@redhat.com> (https://developers.redhat.com)"
+  ],
+  "name": "coolstore-ui",
+  "repository": "jbossdemocentral/coolstore-microservice",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "description": "A JBoss Developer retail demo featuring a pricing microservice, angular UI microservice, protected by Red Hat SSO",
+  "homepage": "https://developers.redhat.com",
+  "dependencies": {
+    "cors": "^2.8.1",
+    "express": "^4.15.2",
+    "keycloak-connect": "^3.0.0-cr.1",
+    "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "bower": "^1.8.0",
+    "bower-nexus3-resolver": "^1.0.1",
+    "jquery": "^3.1.1"
+  },
+  "engines": {
+    "node": ">=0.10.10"
+  },
+  "scripts": {
+    "postinstall": "node_modules/.bin/bower --config.registry.search=${BOWER_MIRROR} install"
+  }
+}

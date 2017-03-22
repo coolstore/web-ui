@@ -1,0 +1,17 @@
+{
+  "name": "coolstore-microservice",
+  "description": "A JBoss Developer retail demo featuring a pricing microservice, angular UI microservice, protected by Red Hat SSO",
+  "authors": [
+    "Red Hat"
+  ],
+  "license": "Apache-2.0",
+  "private": true,
+  "devDependencies": {
+    "patternfly": "~3.18.0",
+    "angular-patternfly": "~3.18.0",
+    "isotope": "^2.2.2",
+    "imagesloaded": "^4.1.0",
+    "angular-route": "1.5.x",
+    "keycloak": "^1.9.4"
+  }
+}

@@ -1,0 +1,122 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  annotations:
+    description: Application template for Coolstore UI
+    iconClass: icon-jboss
+    tags: nodejs,web-ui
+    version: 1.0.0
+  name: web-ui
+labels:
+  template: web-ui
+parameters:
+- name: COOLSTORE_GW_ENDPOINT
+  description: The gateway endpoint 
+  required: true
+  value: http://coolstore.mockable.io/
+- name: SSO_ENABLED
+  description: Set this parameter to true to enable Single Sign-On
+  required: true
+  value: "false"
+- name: SSO_URL
+  description: URL to the SSO Server, example http://sso:8080/. Only required if SSO_URL is set to true
+objects:
+- kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      app: web-ui
+      application: web-ui
+    name: web-ui
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: web-ui
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: web-ui
+    labels:
+      application: web-ui
+  spec:
+    replicas: 1
+    selector:
+      application: web-ui
+      deploymentconfig: web-ui
+    strategy:
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: web-ui
+          deploymentconfig: web-ui
+      spec:
+        containers:
+        - env:
+          - name: COOLSTORE_GW_ENDPOINT
+            value: ${COOLSTORE_GW_ENDPOINT}
+          - name: SSO_ENABLED
+            value: ${SSO_ENABLED}
+          - name: SSO_URL
+            value: ${SSO_URL}
+          - name: SSO_REALM
+            value: coolstore
+          - name: SSO_CLIENT_ID
+            value: web-ui
+          image: web-ui
+          imagePullPolicy: Always
+          name: web-ui
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 2
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - "web-ui"
+        from:
+          kind: ImageStreamTag
+          name: web-ui:latest
+      type: ImageChange
+    - type: ConfigChange
+- kind: Route
+  apiVersion: v1
+  metadata:
+    name: web-ui
+  spec:
+    to:
+      kind: Service
+      name: web-ui
+

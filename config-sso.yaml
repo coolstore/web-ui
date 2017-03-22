@@ -1,0 +1,44 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  annotations:
+    description: Application template for Coolstore UI
+    iconClass: icon-jboss
+    tags: nodejs,web-ui
+    version: 1.0.0
+  name: config-sso-webui
+labels:
+  template: config-sso-webui
+parameters:
+- name: COOLSTORE_WEB_URI
+  required: true
+- name: SSO_SERVICE_URL
+  required: true
+objects:
+- kind: Pod
+  apiVersion: v1
+  metadata:
+    name: config-sso-webui
+  spec:
+    containers:
+      - name: config-sso-webui
+        image: registry.access.redhat.com/rhscl/nodejs-4-rhel7
+        command: [ "/bin/sh", "/tmp/config-files/config-sso.sh" ]
+        env:
+          - name: PATH
+            value:  /opt/rh/rh-nodejs4/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+          - name: LD_LIBRARY_PATH
+            value: /opt/rh/rh-nodejs4/root/usr/lib64
+          - name: SSO_SERVICE_URL
+            value: ${SSO_SERVICE_URL}
+          - name: COOLSTORE_WEB_URI
+            value: ${COOLSTORE_WEB_URI}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /tmp/config-files
+    volumes:
+      - name: config-volume
+        configMap:
+          name: sso-client-config-files
+    restartPolicy: OnFailure
